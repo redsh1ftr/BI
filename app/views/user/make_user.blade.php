@@ -5,7 +5,7 @@
 
 
 
-<table width="50%">
+<table class="BlueTable" width="20%"><td><td><tr>
 
 	<td>{{ Form::label('f_name', 'First Name:') }}
 	<td>{{	Form::text('f_name') }}
@@ -45,7 +45,7 @@
 		<tr>
 </table>
 
-{{ Form::submit('Add New User!')}}
+{{ Form::submit('Add Employee')}}
 
 {{ Form::close()}}
 

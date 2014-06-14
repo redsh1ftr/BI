@@ -44,7 +44,7 @@ class CertController extends BaseController {
 			'term_' => Input::get('term_'),
 			'desc' => Input::get('desc'),
 			));
-		return Redirect::route('admin_profile');
+		return Redirect::route('cert_listShow');
 	}
 
 	public function make_user_certShow($id){
@@ -56,19 +56,25 @@ class CertController extends BaseController {
 	}
 
 
-
-
-
 	public function make_user_certDo(){
-		$timespan = Input::get('reminder2');
-		$time = Input::get('reminder');
-		$cert_term = CertMain::where('id', '=', Input::get('cert_id'))->pluck('term');
-		$cert_term_ = CertMain::where('id', '=', Input::get('cert_id'))->pluck('term_');
-		$exp_time = Carbon::parse(Input::get('cert_received'));
-		$exp_time->$cert_term_($cert_term);
-		$rtime = new Carbon($exp_time);
-		$rtime = $rtime->$timespan($time);
+		
+		$newtime = Input::get('cert_recd');
 
+		$timespan = Input::get('reminder2');//reminder value
+		$time = Input::get('reminder'); //reminder number
+
+		$cert_term = CertMain::where('id', '=', Input::get('cert_id'))->pluck('term'); //get the certification expiration number
+		$cert_term_ = CertMain::where('id', '=', Input::get('cert_id'))->pluck('term_'); //get the certification expiration value (addyears, addmonths)
+
+
+		$expires = Carbon::parse($newtime); //make a new time for carbon to play with
+		$expires->$cert_term_($cert_term);
+
+		$reminder = Carbon::parse($newtime); //make a new time for carbon to play with
+		$reminder->$cert_term_($cert_term);
+		$reminder->$timespan($time);
+		
+		
 //HANDLE IMAGES		
 	if(Input::file('certificate')){
 				$newfile = str_random(124);
@@ -82,11 +88,11 @@ class CertController extends BaseController {
 			'uid' => Input::get('uid'),
 			'cert_id' => Input::get('cert_id'),
 			'cert_recd' => Carbon::parse(Input::get('cert_recd')),
-			'cert_exp' => $exp_time,
-			'reminder' => $rtime,
+			'cert_exp' => $expires,
+			'reminder' => $reminder,
 			'certificate' => "$newfile.$filename",
 			));
-		return Redirect::route('admin_profile');
+		return Redirect::route('user_list');
 
 	}else{
 
@@ -94,13 +100,23 @@ class CertController extends BaseController {
 			'uid' => Input::get('uid'),
 			'cert_id' => Input::get('cert_id'),
 			'cert_recd' => Carbon::parse(Input::get('cert_recd')),
-			'cert_exp' => $exp_time,
-			'reminder' => $rtime,
+			'cert_exp' => $expires,
+			'reminder' => $reminder,
 			));
-		return Redirect::route('admin_profile');
+		return Redirect::route('user_list');
 
 
 	}}
+
+
+	public function user_certShow($id){
+		return View::make('certifications.user_cert_profile', array())
+		->with('pagetitle', 'CERTIFICATE')
+		->with('id', $id)
+		->with('user', UserPr::where('id', '=', $id)->first())
+		->with('cert', UserCertMain::where('id', '=', $id)->first());
+	}
+
 
 
 

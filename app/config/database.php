@@ -56,10 +56,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => '68.178.143.92',
-			'database'  => 'exceldeveloper',
-			'username'  => 'exceldeveloper',
-			'password'  => 'Wordpass!23',
+			'host'      => '127.0.0.1',
+			'database'  => 'excel_dev',
+			'username'  => 'root',
+			'password'  => '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

@@ -17,10 +17,12 @@ class UserController extends BaseController {
 
 
 	public function showProfile($id){
+		$jid = json_decode($id);
 		return View::make('user.user_profile')
 		->with('pagetitle', 'Home')
-		->with('user', UserPr::where('id', '=', $id)->first())
-		->with('certs', UserCertMain::where('uid', '=', $id)->get());
+		->with('user', UserPr::where('id', '=', $jid->id)->first())
+		->with('certs', UserCertMain::where('cert_exp', '>', Carbon::now())->where('uid', '=', $jid->id)->orderBy($jid->sort, $jid->updown)->get())
+		->with('id', $jid);
 	}
 	
 
@@ -41,7 +43,7 @@ class UserController extends BaseController {
 
 	public function make_userShow(){
 		return View::make('user.make_user', array())
-		->with('pagetitle', 'Make Users');
+		->with('pagetitle', 'New Employees');
 	}
 
 	public function make_userDo(){
@@ -64,7 +66,7 @@ class UserController extends BaseController {
 
 	public function user_listShow(){
 		return View::make('user.list', array())
-		->with('pagetitle', 'User List')
+		->with('pagetitle', 'Employee List')
 		->with('users', UserPr::get());
 	}
 	

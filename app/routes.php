@@ -32,8 +32,6 @@ Route::get('/logout', array('as' => 'logout', 'uses' => 'HomeController@logout')
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //USERS//USERS//USERS//USERS//USERS//USERS
 //USERS//USERS//USERS//USERS//USERS//USERS//USERS//USERS
@@ -73,6 +71,8 @@ Route::get('/certifications/list', array('as' => 'cert_listShow', 'uses' => 'Cer
 
 Route::get('/certifications/profile/{id}', array('as' => 'cert_profileShow', 'uses' => 'CertController@cert_profileShow'));
 
+Route::get('/certifications/usercerts/{id}', array('as' => 'user_certShow', 'uses' => 'CertController@user_certShow'));
+
 //make
 
 Route::get('certifications/make/new', array('as' => 'make_cert', 'uses' => 'CertController@make_certShow'));
@@ -88,11 +88,8 @@ Route::post('certifications/user/add', array('as' => 'make_user_cert', 'uses' =>
 
 
 
-Route::get('/home', function()
-{
 
-		return View::make('user.create_users');
-});
+
 
 
 

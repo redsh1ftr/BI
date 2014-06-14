@@ -1,11 +1,19 @@
 @extends('layouts.admin')
 @section('top_left_1')
 
-{{$certs->name}}<br>
+<table class="BlueTable">
 
-{{$certs->desc}}<br>
+<?php 
 
-{{$certs->term}}<br>
+	$years = str_replace('addyears', 'Years', $certs->term_);
+	$termlength = str_replace('addmonths', 'Months', $years);	
+?>
+
+<td>{{$certs->name}}<td>Valid for {{$certs->term}} {{ $termlength }}<tr>
+
+<td><td>{{$certs->desc}}<tr>
+
+</table>
 
 
 @stop

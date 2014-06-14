@@ -2,31 +2,32 @@
 
 @section('top_left_1')
 
+<table class="BlueTable">
+<td><td>{{$user->f_name}} {{$user->m_name}} {{$user->l_name}}<tr>
 
-<h2>{{$user->f_name}} {{$user->m_name}} {{$user->l_name}}</h2>
 
 
-
-<table>
+<td>Address:<td>
 
 @if($user->street2)
-	<td>{{$user->street1}}, {{$user->street2}}<tr>
+	{{$user->street1}}, {{$user->street2}}
 @else
-	<td>{{$user->street1}}<tr>
+	{{$user->street1}}
 @endif
-	<td>{{$user->city}} {{$user->state}}, {{$user->zip}}<tr>
-</table>
+	 {{$user->city}} {{$user->state}}, {{$user->zip}}<tr>
 
 
 
 
-<table>
+
 	<td>Hire Date:<td>{{Carbon::parse($user->hire_date)->format('D, M d Y')}}<tr>
 	<td>Birthday:<td>{{Carbon::parse($user->dob)->format('D, M d Y')}}<tr>
 	<td>Phone:<td>{{$user->phone}}<tr>
-</table>
-{{HTML::mailto($user->email)}}
+@if($user->email)
+	<td><td>{{HTML::mailto($user->email)}}<tr>
 
+@endif
+</table>
 
 @stop
 
@@ -34,26 +35,77 @@
 @section('top_right_1')
 
 
+<h2> Active Certifications </h2>
 
+<table class="BlueTable" align="center" width="100%" border="1">
 
-<table align="center" width="100%" border="1">
 		<th>Certification</th>
-		<th>Received</th>
-		<th>Expires</th>
-		<th>Reminder</th>
+
+
+		<th>{{link_to_route('user_profile', '▲', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_recd', 'updown' => 'asc')))}} 
+			Received
+			{{link_to_route('user_profile', '▼', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_recd', 'updown' => 'desc')))}}</th>
+
+
+		<th>{{link_to_route('user_profile', '▲', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_exp', 'updown' => 'desc')))}}
+			Expires 
+		{{link_to_route('user_profile', '▼', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_exp', 'updown' => 'asc')))}}</th>
+
+
+		<th>{{link_to_route('user_profile', '▲', json_encode(array('id', 'id' => $user->id, 'sort' => 'reminder', 'updown' => 'asc')))}} 
+			Reminder
+			 {{link_to_route('user_profile', '▼', json_encode(array('id', 'id' => $user->id, 'sort' => 'reminder', 'updown' => 'desc')))}}</th>
 		<th>Image</th></tr>
 	
 @foreach($certs as $cert)
 
-		<td>{{ CertMain::where('id', '=', $cert->cert_id)->pluck('name') }} 
+		<td>{{ link_to_route('user_certShow', CertMain::where('id', '=', $cert->cert_id)->pluck('name'), $cert->id) }} 
 		<td>{{ Carbon::parse($cert->cert_recd)->format('D, M d Y') }} 
 		<td>{{ Carbon::parse($cert->cert_exp)->format('D, M d Y') }} 
 		<td>{{ Carbon::parse($cert->reminder)->format('D, M d Y')}}
-		<td>@if($cert->certificate) {{link_to("http://www.precisemaintenance.com/ExcelBI/public/uploads/$cert->certificate", 'View Image')}}@endif<tr>
+		<td>@if($cert->certificate) <a target="_blank"{{link_to("http://www.precisemaintenance.com/ExcelBI/public/uploads/$cert->certificate", 'View Image')}}@endif<tr>
 
 @endforeach
 </table>
 
+@stop
+
+@section('expired_certs')
+
+<?php $exp_certs = UserCertMain::where('uid', '=', $id->id)->where('cert_exp', '<', Carbon::today())->get();?>
+
+@if(!$exp_certs->isEmpty())
+
+<h2> Expired Certifications </h2>
 
 
+<table class="BlueTable" align="center" width="100%" border="1">
+		<th>Certification</th>
+
+
+		<th>{{link_to_route('user_profile', '▲', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_recd', 'updown' => 'asc')))}} 
+			Received
+			{{link_to_route('user_profile', '▼', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_recd', 'updown' => 'desc')))}}</th>
+
+
+		<th>{{link_to_route('user_profile', '▲', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_exp', 'updown' => 'desc')))}}
+			Expires 
+		{{link_to_route('user_profile', '▼', json_encode(array('id', 'id' => $user->id, 'sort' => 'cert_exp', 'updown' => 'asc')))}}</th>
+
+
+		<th>{{link_to_route('user_profile', '▲', json_encode(array('id', 'id' => $user->id, 'sort' => 'reminder', 'updown' => 'asc')))}} 
+			Reminder
+			 {{link_to_route('user_profile', '▼', json_encode(array('id', 'id' => $user->id, 'sort' => 'reminder', 'updown' => 'desc')))}}</th>
+		<th>Image</th></tr>
+	
+@foreach($exp_certs as $certs)
+		<td>{{ link_to_route('user_certShow', CertMain::where('id', '=', $cert->cert_id)->pluck('name'), $cert->id) }} 
+		<td>{{ Carbon::parse($cert->cert_recd)->format('D, M d Y') }} 
+		<td>{{ Carbon::parse($cert->cert_exp)->format('D, M d Y') }} 
+		<td>{{ Carbon::parse($cert->reminder)->format('D, M d Y')}}
+		<td>@if($cert->certificate) <a target="_blank"{{link_to("http://www.precisemaintenance.com/ExcelBI/public/uploads/$cert->certificate", 'View Image')}}@endif<tr>
+
+@endforeach
+</table>
+@endif
 @stop
